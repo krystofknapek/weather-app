@@ -24,6 +24,7 @@ function App() {
 
       {weather && (
         <div>
+          <h1>{weather.name},{weather.sys.country}</h1>
           {Object.entries(weather).map(([key, value]) => (
             <div key={key}>
               <strong>{key}</strong>: {JSON.stringify(value)}
