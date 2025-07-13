@@ -1,20 +1,29 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import cityList from '../Assets/city.list.json';
+
+function normalizeString(str) {
+  return str
+    .normalize('NFD')                   
+    .replace(/[\u0300-\u036f]/g, '')    
+    .toLowerCase();
+}
+
 
 export default function Autocomplete({ onSelect }) {
   const [text, setText] = useState('');
   const inputRef = useRef(null);
+  const normString = normalizeString(text);
 
-  const suggestions =
-    text.length >= 2
-      ? cityList
-          .filter(c => new RegExp(text, 'i').test(c.name))
-          .slice(0, 10)
-      : [];
+ const suggestions = useMemo(() => {
+    if (normString.length < 2) return [];
+    return cityList
+      .filter(city => normalizeString(city.name).startsWith(normString))
+      .slice(0, 10);
+  }, [normString]);
 
-  const handleSelect = c => {
+  const handleSelect = cityid => {
     setText('');            
-    onSelect(c.id);         
+    onSelect(cityid.id);         
     inputRef.current.focus(); 
   };
 
@@ -30,12 +39,12 @@ export default function Autocomplete({ onSelect }) {
 
       {suggestions.length > 0 && (
         <ul>
-          {suggestions.map(c => (
+          {suggestions.map(city => (
             <li
-              key={c.id}
-              onClick={() => handleSelect(c)}
+              key={city.id}
+              onClick={() => handleSelect(city)}
             >
-              {c.name}, {c.country}
+              {city.name}, {city.country}
             </li>
           ))}
         </ul>
