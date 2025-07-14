@@ -7,6 +7,7 @@ function App() {
   const [cityId, setCityId] = useState(null);
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
+  const [showEvening, setShowEvening] = useState(false);
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
 
   const [coords, setCoords] = useState({ lat: null, lon: null });
@@ -59,11 +60,12 @@ function App() {
   const nextFiveDaysForecast = useMemo(() => {
     if (!forecast?.list) return [];
     const now = Date.now();
+    const desiredTime = showEvening ? '21:00:00' : '12:00:00';
     return forecast.list
-      .filter(entry => entry.dt_txt.endsWith('12:00:00'))
+      .filter(entry => entry.dt_txt.endsWith(desiredTime))
       .filter(entry => new Date(entry.dt_txt).getTime() >= now)
       .slice(0, 5);
-  }, [forecast]);
+  }, [forecast, showEvening]);
 
   const renderObject = obj =>
     Object.entries(obj).map(([key, value]) => (
@@ -94,8 +96,9 @@ function App() {
      {nextFiveDaysForecast.length > 0 && (
         <div>
           <h2>
-            5denní předpověď (poledne): {forecast.city.name}, {forecast.city.country}
+            5denní předpověď ({showEvening ? '21:00' : '12:00'}): {forecast.city.name}, {forecast.city.country}
           </h2>
+          <button onClick={() => setShowEvening(prev => !prev)}>X</button>
           {nextFiveDaysForecast.map(entry => (
             <div key={entry.dt}>
               <h3>
