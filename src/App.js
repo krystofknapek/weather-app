@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import Autocomplete from './Components/Autocomplete';
+import './App.css';
 
 function App() {
   const [cityId, setCityId] = useState(null);
@@ -8,22 +9,52 @@ function App() {
   const [forecast, setForecast] = useState(null);
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
 
-  useEffect(() => {
-    if (!cityId) return;
-    axios
-      .get('https://api.openweathermap.org/data/2.5/weather', {
-        params: { id: cityId, appid: apiKey, units: 'metric', lang: 'cz' }
-      })
-      .then(res => setWeather(res.data))
-      .catch(console.error);
+  const [coords, setCoords] = useState({ lat: null, lon: null });
 
-    axios
-      .get('https://api.openweathermap.org/data/2.5/forecast', {
-        params: { id: cityId, appid: apiKey, units: 'metric', lang: 'cz' }
-      })
-      .then(res => setForecast(res.data))
-      .catch(console.error);
-  }, [cityId, apiKey]);
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.warn('Geolocation není podporována.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude, longitude } }) => {
+        setCoords({ lat: latitude, lon: longitude });
+      },
+      err => {
+        console.error('Geolokace selhala:', err);
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+  if (cityId == null && (coords.lat == null || coords.lon == null)) {
+    return;
+  }
+
+  const commonParams = {
+    units: 'metric',
+    lang: 'cz',
+    appid: apiKey
+  };
+
+  const weatherParams = cityId != null
+    ? { ...commonParams, id: cityId }
+    : { ...commonParams, lat: coords.lat, lon: coords.lon };
+
+  const forecastParams = weatherParams;
+
+  axios
+    .get('https://api.openweathermap.org/data/2.5/weather', { params: weatherParams })
+    .then(res => setWeather(res.data))
+    .catch(console.error);
+
+  axios
+    .get('https://api.openweathermap.org/data/2.5/forecast', { params: forecastParams })
+    .then(res => setForecast(res.data))
+    .catch(console.error);
+
+}, [coords, cityId, apiKey]);
+
 
   const nextFiveDaysForecast = useMemo(() => {
     if (!forecast?.list) return [];
@@ -45,7 +76,7 @@ function App() {
     ));
 
   return (
-    <div>
+    <div className='Main'>
       <h1>Weather App</h1>
       <Autocomplete onSelect={setCityId} />
 
