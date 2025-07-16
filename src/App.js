@@ -1,120 +1,96 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
-import Autocomplete from './Components/Autocomplete';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import Autocomplete from './Components/Autocomplete'
+import Todayweather from './Components/Todayweather'
+import Forecast from './Components/Forecast'
+import './App.css'
 
-function App() {
-  const [cityId, setCityId] = useState(null);
-  const [weather, setWeather] = useState(null);
-  const [forecast, setForecast] = useState(null);
-  const [showEvening, setShowEvening] = useState(false);
-  const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
+export default function App() {
+  const [cityId, setCityId] = useState(null)
+  const [weather, setWeather] = useState(null)
+  const [forecastData, setForecastData] = useState(null)
+  const [showEvening, setShowEvening] = useState(false)
+  const [coords, setCoords] = useState({ lat: null, lon: null })
+  const apiKey = process.env.REACT_APP_WEATHER_API_KEY
 
-  const [coords, setCoords] = useState({ lat: null, lon: null });
-
+  // 1) Geolokace
   useEffect(() => {
-    if (!navigator.geolocation) {
-      console.warn('Geolocation není podporována.');
-      return;
-    }
+    if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition(
-      ({ coords: { latitude, longitude } }) => {
-        setCoords({ lat: latitude, lon: longitude });
-      },
-      err => {
-        console.error('Geolokace selhala:', err);
-      }
-    );
-  }, []);
+      ({ coords }) => setCoords({ lat: coords.latitude, lon: coords.longitude }),
+      console.error
+    )
+  }, [])
 
+  // 2) Fetch current + forecast přes fetch()
   useEffect(() => {
-  if (cityId == null && (coords.lat == null || coords.lon == null)) {
-    return;
+    const useByCoords = cityId == null && coords.lat != null
+
+    if (!useByCoords && cityId == null) return
+
+    const baseParams = new URLSearchParams({
+      units: 'metric',
+      lang: 'cz',
+      appid: apiKey
+    })
+
+    if (cityId != null) {
+      baseParams.set('id', cityId)
+    } else {
+      baseParams.set('lat', coords.lat)
+      baseParams.set('lon', coords.lon)
+    }
+
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?${baseParams}`
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?${baseParams}`
+
+    async function fetchData() {
+      try {
+        const [weatherRes, forecastRes] = await Promise.all([
+          fetch(weatherUrl),
+          fetch(forecastUrl)
+        ])
+        if (!weatherRes.ok || !forecastRes.ok) {
+          console.error('Network response was not ok')
+          return
+        }
+        const weatherJson = await weatherRes.json()
+        const forecastJson = await forecastRes.json()
+        setWeather(weatherJson)
+        setForecastData(forecastJson)
+      } catch (error) {
+        console.error('Fetch failed:', error)
+      }
+    }
+
+    fetchData()
+  }, [coords, cityId, apiKey])
+
+  let nextFiveDays = []
+  if (forecastData?.list) {
+    const now = Date.now()
+    const suffix = showEvening ? '21:00:00' : '12:00:00'
+    const todayISO = new Date().toISOString().split('T')[0]
+
+    nextFiveDays = forecastData.list
+      .filter(e =>
+        e.dt_txt.endsWith(suffix) &&
+        new Date(e.dt_txt).getTime() >= now &&
+        !e.dt_txt.startsWith(todayISO)
+      )
+      .slice(0, 5)
   }
 
-  const commonParams = {
-    units: 'metric',
-    lang: 'cz',
-    appid: apiKey
-  };
-
-  const weatherParams = cityId != null
-    ? { ...commonParams, id: cityId }
-    : { ...commonParams, lat: coords.lat, lon: coords.lon };
-
-  const forecastParams = weatherParams;
-
-  axios
-    .get('https://api.openweathermap.org/data/2.5/weather', { params: weatherParams })
-    .then(res => setWeather(res.data))
-    .catch(console.error);
-
-  axios
-    .get('https://api.openweathermap.org/data/2.5/forecast', { params: forecastParams })
-    .then(res => setForecast(res.data))
-    .catch(console.error);
-
-}, [coords, cityId, apiKey]);
-
-
-  const nextFiveDaysForecast = useMemo(() => {
-    if (!forecast?.list) return [];
-    const now = Date.now();
-    const desiredTime = showEvening ? '21:00:00' : '12:00:00';
-    return forecast.list
-      .filter(entry => entry.dt_txt.endsWith(desiredTime))
-      .filter(entry => new Date(entry.dt_txt).getTime() >= now)
-      .slice(0, 5);
-  }, [forecast, showEvening]);
-
-  const renderObject = obj =>
-    Object.entries(obj).map(([key, value]) => (
-      <div key={key}>
-        <strong>{key}</strong>:{' '}
-        {typeof value === 'object' && value !== null
-          ? <div>{renderObject(value)}</div>
-          : JSON.stringify(value)}
-      </div>
-    ));
-
   return (
-    <div className='Main'>
+    <div className="Main">
       <h1>Weather App</h1>
       <Autocomplete onSelect={setCityId} />
-
-      {weather && (
-        <div>
-          <h1>{weather.name},{weather.sys.country}</h1>
-          {Object.entries(weather).map(([key, value]) => (
-            <div key={key}>
-              <strong>{key}</strong>: {JSON.stringify(value)}
-            </div>
-          ))}
-        </div>
-      )}
-
-     {nextFiveDaysForecast.length > 0 && (
-        <div>
-          <h2>
-            5denní předpověď ({showEvening ? '21:00' : '12:00'}): {forecast.city.name}, {forecast.city.country}
-          </h2>
-          <button onClick={() => setShowEvening(prev => !prev)}>X</button>
-          {nextFiveDaysForecast.map(entry => (
-            <div key={entry.dt}>
-              <h3>
-                {new Date(entry.dt_txt).toLocaleDateString('cs-CZ', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long',
-                })}
-              </h3>
-              {renderObject(entry)}
-            </div>
-          ))}
-        </div>
-      )}
+      <Todayweather weather={weather} />
+      <Forecast
+        city={forecastData?.city}
+        list={nextFiveDays}
+        showEvening={showEvening}
+        onToggle={setShowEvening}
+      />
     </div>
-  );
+  )
 }
-
-export default App;
