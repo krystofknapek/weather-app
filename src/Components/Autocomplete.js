@@ -3,8 +3,8 @@ import cityList from '../Assets/city.list.json';
 
 function normalizeString(str) {
   return str
-    .normalize('NFD')                   
-    .replace(/[\u0300-\u036f]/g, '')    
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase();
 }
 
@@ -14,7 +14,7 @@ export default function Autocomplete({ onSelect }) {
   const inputRef = useRef(null);
   const normString = normalizeString(text);
 
- const suggestions = useMemo(() => {
+  const suggestions = useMemo(() => {
     if (normString.length < 2) return [];
     return cityList
       .filter(city => normalizeString(city.name).startsWith(normString))
@@ -22,27 +22,29 @@ export default function Autocomplete({ onSelect }) {
   }, [normString]);
 
   const handleSelect = cityid => {
-    setText('');            
-    onSelect(cityid.id);         
-    inputRef.current.focus(); 
+    setText('');
+    onSelect(cityid.id);
+    inputRef.current.focus();
   };
 
   return (
-    <div>
+    <div className='autocomplete-wrapper'>
       <input
         ref={inputRef}
         type="text"
         value={text}
         onChange={e => setText(e.target.value)}
         placeholder="Zadej město…"
+        className='autocomplete-input'
       />
 
       {suggestions.length > 0 && (
-        <ul>
+        <ul className='autocomplete-dropdown'>
           {suggestions.map(city => (
             <li
               key={city.id}
               onClick={() => handleSelect(city)}
+              className='autocomplete-item'
             >
               {city.name}, {city.country}
             </li>
