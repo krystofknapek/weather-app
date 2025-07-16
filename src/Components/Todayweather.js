@@ -1,4 +1,5 @@
 import React from 'react';
+
 export default function TodayWeather({ weather }) {
     if (!weather) return null;
     return (
