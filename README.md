@@ -58,7 +58,7 @@ Simple React application for displaying current weather and a 5-day forecast usi
 npm start
 ```
 
-The app will run at `http://localhost:3000` and reload on code changes.
+The app will run at `http://localhost:3000` and reload on code changes. or you cant visit this link https://krystofknapek.github.io/weather-app/ .
 
 ## Project Structure
 
@@ -76,7 +76,7 @@ The app will run at `http://localhost:3000` and reload on code changes.
 │   │   └── Toggle.js           # 12:00/21:00 toggle switch
 │   ├── App.css                 # Global styles
 │   └── App.js                  # Main application component
-└── .env                        # API key (excluded from VCS)
+└── .env                        # API key
 ```
 
 ## Components
