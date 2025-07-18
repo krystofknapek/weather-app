@@ -1,69 +1,110 @@
-# Weather app
+# Weather App
 
+Simple React application for displaying current weather and a 5-day forecast using the OpenWeatherMap API.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+* [Features](#features)
+* [Technologies](#technologies)
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Project Structure](#project-structure)
+* [Components](#components)
+* [Environment Variables](#environment-variables)
+* [Contributing](#contributing)
+* [License](#license)
 
-### `npm start`
+## Features
 
-Runs the app in your browser 
-https://krystofknapek.github.io/weather-app/
+* **Automatic Geolocation**: Attempts to determine user location on load.
+* **City Search**: Autocomplete component suggests cities based on input.
+* **Current Weather**: Displays temperature, location, description, and weather icon.
+* **5-Day Forecast**: Shows daily min/max temperatures at 12:00 or 21:00.
+* **Toggle Switch**: Switch between midday and evening forecasts.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Technologies
 
-### `npm test`
+* React (functional components, Hooks)
+* Fetch API
+* OpenWeatherMap API
+* Custom CSS
+* `city.list.json` for autocomplete suggestions
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Requirements
 
-### `npm run build`
+* Node version ≥ 20
+* npm version ≥ 10
+* Your own OpenWeatherMap API key
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Clone the repository:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```bash
+   git clone https://github.com/krystofknapek/weather-app
+   cd weather-app
+   ```
+2. Install dependencies:
 
-### `npm run eject`
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file (see [Environment Variables](#environment-variables)).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Usage
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The app will run at `http://localhost:3000` and reload on code changes.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Project Structure
 
-## Learn More
+```
+├── public/
+│   └── index.html
+├── src/
+│   ├── Assets/
+│   │   └── city.list.json     # City list for autocomplete
+│   ├── Components/
+│   │   ├── Autocomplete.js     # City search input and suggestion list
+│   │   ├── TodayWeather.js     # Current weather component
+│   │   ├── Forecast.js         # Wrapper for forecast items and toggle
+│   │   ├── Forecastweather.js  # Single day forecast item
+│   │   └── Toggle.js           # 12:00/21:00 toggle switch
+│   ├── App.css                 # Global styles
+│   └── App.js                  # Main application component
+└── .env                        # API key (excluded from VCS)
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Components
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* **App.js**
+  Manages city, weather, forecast, and geolocation state.
 
-### Code Splitting
+* **Autocomplete.js**
+  Filters `city.list.json` based on user input and returns selected city `id`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* **TodayWeather.js**
+  Displays city name, country, temperature, coresponding weather icon, and description.
 
-### Analyzing the Bundle Size
+* **Forecast.js**
+  Header with toggle and container for forecast items.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* **Forecastweather.js**
+  Individual forecast card showing date, icon, and min/max temperatures.
 
-### Making a Progressive Web App
+* **Toggle.js**
+  Styled checkbox switch controlling midday or evening forecast display.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Environment Variables
 
-### Advanced Configuration
+Create a `.env` file in the project root:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```
+REACT_APP_WEATHER_API_KEY=your_openweathermap_api_key
+```
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Restart the development server after adding the variable.

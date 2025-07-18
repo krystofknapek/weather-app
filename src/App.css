@@ -107,7 +107,7 @@ body {
 /* Input pole */
 .autocomplete-input {
   text-align: center;
-  border-width: 2px;
+  border-width: 1px;
   transition: border-color 0.2s;
 }
 
@@ -182,10 +182,10 @@ body {
   z-index: 1;
 }
 
-.today-box:hover {
+/* .today-box:hover {
   transform: scale(1.02);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
+} */
 
 .today-box__left {
   display: flex;
@@ -254,6 +254,7 @@ body {
   align-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  
 }
 
 .forecast-day:hover {
