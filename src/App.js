@@ -12,7 +12,6 @@ export default function App() {
   const [coords, setCoords] = useState({ lat: null, lon: null })
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY
 
-  // 1) Geolokace
   useEffect(() => {
     if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition(
@@ -21,7 +20,6 @@ export default function App() {
     )
   }, [])
 
-  // 2) Fetch current + forecast přes fetch()
   useEffect(() => {
     const useByCoords = cityId == null && coords.lat != null
 

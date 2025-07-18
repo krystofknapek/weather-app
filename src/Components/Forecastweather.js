@@ -5,7 +5,8 @@ export default function forecastweather({ entry }) {
     <div className="forecast-day">
       <h3>{new Date(entry.dt_txt).toLocaleDateString('cs-CZ', {
         weekday: 'long', day: 'numeric', month: 'long'
-      })}</h3>
+      })}
+      </h3>
       <img
         src={`https://openweathermap.org/img/wn/${entry.weather[0].icon}@2x.png`}
         alt={entry.weather[0].description}
