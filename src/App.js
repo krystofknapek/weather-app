@@ -89,6 +89,7 @@ export default function App() {
         showEvening={showEvening}
         onToggle={setShowEvening}
       />
+      <footer> </footer>
     </div>
   )
 }

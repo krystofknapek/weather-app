@@ -12,8 +12,6 @@ Simple React application for displaying current weather and a 5-day forecast usi
 * [Project Structure](#project-structure)
 * [Components](#components)
 * [Environment Variables](#environment-variables)
-* [Contributing](#contributing)
-* [License](#license)
 
 ## Features
 
@@ -28,7 +26,7 @@ Simple React application for displaying current weather and a 5-day forecast usi
 * React (functional components, Hooks)
 * Fetch API
 * OpenWeatherMap API
-* Custom CSS
+* CSS
 * `city.list.json` for autocomplete suggestions
 
 ## Requirements
@@ -58,7 +56,7 @@ Simple React application for displaying current weather and a 5-day forecast usi
 npm start
 ```
 
-The app will run at `http://localhost:3000` and reload on code changes.
+The app will run at `http://localhost:3000` and reload on code changes or you can visit this link https://krystofknapek.github.io/weather-app/.
 
 ## Project Structure
 
