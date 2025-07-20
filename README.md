@@ -1,6 +1,8 @@
 # Weather App
 
 Simple React application for displaying current weather and a 5-day forecast using the OpenWeatherMap API.
+<img width="1904" height="1484" alt="Screenshot 2025-07-20 at 23 44 48" src="https://github.com/user-attachments/assets/f6861b39-9ad3-45a9-9fc7-022b036db229" />
+<img width="1788" height="1442" alt="Screenshot 2025-07-20 at 23 44 52" src="https://github.com/user-attachments/assets/28faf29a-c9cc-41fd-b0b6-583a8bd2b46d" />
 
 ## Table of Contents
 
